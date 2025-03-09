@@ -5,7 +5,7 @@ import { useAppwrite } from "./useAppwrite";
 import { Redirect } from "expo-router";
 
 interface GlobalContextType {
-  isLogged: boolean;
+  isLoggedIn: boolean;
   user: User | null;
   loading: boolean;
   refetch: () => void;
@@ -33,12 +33,12 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     fn: getCurrentUser,
   });
 
-  const isLogged = !!user;
+  const isLoggedIn = !!user;
 
   return (
     <GlobalContext.Provider
       value={{
-        isLogged,
+        isLoggedIn,
         user,
         loading,
         refetch,
