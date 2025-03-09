@@ -1,0 +1,95 @@
+import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
+import * as Linking from "expo-linking";
+import { openAuthSessionAsync } from "expo-web-browser";
+import { Alert } from "react-native";
+
+export const config = {
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
+  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+};
+
+export const client = new Client();
+client
+  .setEndpoint(config.endpoint!)
+  .setProject(config.projectId!)
+
+export const avatar = new Avatars(client);
+export const account = new Account(client);
+
+export async function login() {
+  try {
+    const redirectUri = "http://localhost/auth/callback";
+
+    const response = await account.createOAuth2Session(
+      OAuthProvider.Google,
+      redirectUri
+    );
+    if (!response) throw new Error("Create OAuth2 token failed");
+
+    const browserResult = await openAuthSessionAsync(
+      response.toString(),
+      redirectUri
+    );
+    if (browserResult.type !== "success")
+      throw new Error("Create OAuth2 token failed");
+
+    const url = new URL(browserResult.url);
+    const secret = url.searchParams.get("secret")?.toString();
+    const userId = url.searchParams.get("userId")?.toString();
+    if (!secret || !userId) throw new Error("Create OAuth2 token failed");
+
+    const session = await account.createSession(userId, secret);
+    if (!session) throw new Error("Failed to create session");
+    console.log("OAuth session started successfully");
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+export async function logout() {
+  try {
+    await account.deleteSessions();
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+// export async function getCurrentUser() {
+//   try {
+//     const user = await account.get();
+//     if (user.$id) {
+//       const userAvatar = avatar.getInitials(user.name);
+//       return {
+//         ...user,
+//         avatar: userAvatar.toString(),
+//       };
+//     }
+//     return user;
+//   } catch (error) {
+//     console.error(error);
+//     return null;
+//   }
+// }
+
+export async function getCurrentUser() {
+  try {
+    const user = await account.get();
+    if (user && user.$id) {
+      const userAvatar = avatar.getInitials(user.name);
+      return {
+        ...user,
+        avatar: userAvatar.toString(),
+      };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+}
