@@ -53,7 +53,7 @@ export const Card = ({ onPress }: Props) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="flex-1 w-full mt-4 px-3 py-4 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
+      className="flex-1 w-full px-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
     >
       <View className="flex-row items-start  bg-white/90 px-3 py-1.5 rounded-full absolute top-5 right-5 z-50">
         <Image source={icons.star} className="size-3.5" />
@@ -63,16 +63,15 @@ export const Card = ({ onPress }: Props) => {
       </View>
       <Image source={images.japan} className="w-full h-40 rounded-lg" />
       <View className="flex-col items-start mt-4">
-        <Text className="text-xl font-bold text-black-300" numberOfLines={1}>
+        <Text className="text-base font-rubikBold text-black-300">
           La Grand Maison
         </Text>
-        <Text className="text-base font-rubik text-black-100">
+        <Text className="text-xs font-rubik text-black-100">
           Mahanagar, Lucknow
         </Text>
         <View className="flex-row w-full items-start justify-between">
           <Text
-            className="text-lg font-bold text-primary-300"
-            numberOfLines={1}
+            className="text-base font-rubikBold text-primary-300"
           >
             $2,1020
           </Text>
