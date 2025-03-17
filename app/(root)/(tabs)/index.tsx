@@ -2,10 +2,8 @@ import { Card, FeaturedCard } from "@/components/Cards";
 import Filters from "@/components/Filters";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
-import images from "@/constants/images";
 import { getLatestProperties, getProperties } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
-import seed from "@/lib/seed";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
@@ -54,7 +52,7 @@ export default function Index() {
     router.push(`/properties/${id}`);
   };
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="bg-gray-100 h-full">
       <FlatList
         data={properties}
         renderItem={({ item }) => (
@@ -108,23 +106,24 @@ export default function Index() {
                   size="large"
                   className="text-primary-300 mt-5"
                 />
-              ) : (
+              ) : !latestProperties || latestProperties.length === 0 ? (
                 <NoResults />
+              ) : (
+                <FlatList
+                  data={latestProperties}
+                  renderItem={({ item }) => (
+                    <FeaturedCard
+                      item={item}
+                      onPress={() => handleCardPress(item.$id)}
+                    />
+                  )}
+                  keyExtractor={(item) => item.$id}
+                  horizontal
+                  bounces={false}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="flex gap-5 mt-5"
+                ></FlatList>
               )}
-              <FlatList
-                data={latestProperties}
-                renderItem={({ item }) => (
-                  <FeaturedCard
-                    item={item}
-                    onPress={() => handleCardPress(item.$id)}
-                  />
-                )}
-                keyExtractor={(item) => item.$id}
-                horizontal
-                bounces={false}
-                showsHorizontalScrollIndicator={false}
-                contentContainerClassName="flex gap-5 mt-5"
-              ></FlatList>
             </View>
             <View className="my-5 px-4">
               <View className="flex-row items-start justify-between ">
